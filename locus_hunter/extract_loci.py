@@ -182,13 +182,19 @@ class ExtractLoci(Processor):
 
         self.loci = []
 
-        gbks = get_files(source=self.gbk_dir, isfullpath=True)
+        gbks = self.get_gbks()
         for gbk in gbks:
             chromosomes = self.read_genbank(gbk)
             for chromosome in chromosomes:
                 self.extrac_loci_from(chromosome)
 
         return self.loci
+
+    def get_gbks(self) -> List[str]:
+        files = get_files(source=self.gbk_dir, isfullpath=True)
+        gbks = [f for f in files
+                if not os.path.basename(f).startswith('.')]
+        return gbks
 
     def read_genbank(self, gbk: str) -> List[Chromosome]:
         return ReadGenbank(self.settings).main(gbk=gbk)

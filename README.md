@@ -1,2 +1,2 @@
 # Locus Hunter
-**Locus Hunter for Prokaryotic Genomes**
+**Mining Genomic Loci of Prokaryotes**

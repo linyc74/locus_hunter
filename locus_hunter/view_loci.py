@@ -105,6 +105,7 @@ class PlotGraphicRecords(Processor):
 
     height_cm_per_locus: float = to_inch(1)
     width_cm_per_kb: float = to_inch(1)
+    width_cm_per_char: float = to_inch(0.2)
     scale_bar_kb: int = 5000
     dpi = 600
 
@@ -137,7 +138,7 @@ class PlotGraphicRecords(Processor):
         )
 
     def plot_graphic_records(self):
-        x_max = self.get_max_len()
+        x_max = self.max_seq_len()
         for i, record in enumerate(self.graphic_records):
             is_last = i == len(self.graphic_records) - 1
             record.plot(
@@ -189,11 +190,15 @@ class PlotGraphicRecords(Processor):
         self.figure.set_size_inches(w=w, h=h)
 
     def get_figure_width(self) -> float:
-        max_len_kb = self.get_max_len() / 1000
-        return self.width_cm_per_kb * max_len_kb
+        locus_width = self.width_cm_per_kb * self.max_seq_len() / 1000
+        seqname_width = self.width_cm_per_char * self.max_seqname_len()
+        return locus_width + seqname_width
 
-    def get_max_len(self) -> int:
+    def max_seq_len(self) -> int:
         return max([r.sequence_length for r in self.graphic_records])
+
+    def max_seqname_len(self) -> int:
+        return max(map(len, self.seqnames))
 
     def save_output(self):
         for fmt in ['pdf', 'png']:

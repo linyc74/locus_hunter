@@ -82,3 +82,13 @@ class TestViewLoci(TestCase):
         ViewLoci(self.settings).main(
             loci=loci,
             output=output)
+
+    def test_very_long_name(self):
+        loci = read_genbank(file=f'{self.indir}/colored_loci.gbk')
+        for locus in loci:
+            locus.seqname = 'x' * 100
+        output = f'{self.outdir}/output'
+
+        ViewLoci(self.settings).main(
+            loci=loci,
+            output=output)

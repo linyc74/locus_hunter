@@ -14,8 +14,9 @@ Genbank filenames in the folder `GENBANK_DIR` should not contain any blank space
 ### Dependency
 
 Download and install [Anaconda](https://www.anaconda.com/products/individual) on either Mac or Linux.
-If you are a Windows user, [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10) works as well.
+For Windows user, [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10) works as well.
 
 Once Anaconda is set up, install the following packages in the terminal:
 
-    conda install -c bioconda dna_features_viewer blast CD-HIT
+    pip install ngslite dna_features_viewer
+    conda install -c bioconda blast CD-HIT

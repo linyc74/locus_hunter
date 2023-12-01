@@ -1,0 +1,44 @@
+LOCUS       NZ_CP124647.1           1297 bp    DNA              UNK 14-SEP-2023
+DEFINITION  Pseudomonas aeruginosa strain 2020CK-00185 plasmid unnamed1.
+ACCESSION   NZ_CP124647
+VERSION     NZ_CP124647.1
+DBLINK      Assembly: GCF_029961525.1
+            BioSample: SAMN15907120
+            BioProject: PRJNA878812
+KEYWORDS    Pseudomonas Genome DB Version: 22.1.
+SOURCE      Pseudomonas aeruginosa 2020CK-00185
+  ORGANISM  Pseudomonas aeruginosa 2020CK-00185
+            .
+FEATURES             Location/Qualifiers
+     pseudo          1..658
+                     /gene="precorrin-2 C(20)-methyltransferase (pseudogene)"
+                     /locus_tag="P7I78_RS33520"
+                     /db_xref="Pseudomonas Genome DB: PGD264824409"
+     pseudo          651..1297
+                     /gene="cobalt-precorrin 5A hydrolase (pseudogene)"
+                     /locus_tag="P7I78_RS33525"
+                     /db_xref="Pseudomonas Genome DB: PGD264824410"
+ORIGIN
+        1 gccgcggggt gtggtttttt cggggcacag ggaaagagag gacacccctc cggcaacccg
+       61 ggggcccccc cggccccggc cccgggcgcc cccgccgctg gcctacccgg tcccccccga
+      121 aaagcgggaa ccgccgctgt gctacgagac catcatcagc gatttctacg acaccgccgc
+      181 cgaacagctg gccgcgcacc tggacgccgg ccgcgacgtg gcggtgatct gcgagggcga
+      241 cccgttcttc tacggttcct acatgtacct ccacgaccgc ctggcgacgc gctacgaaag
+      301 cgaagtggtg cctggcgttt gctcgatgct cggcggcgcg gcggtgctcg gtgcgccgct
+      361 ggtgtaccgc aaccagagcc tctcggtgct ctccggagtg ctgcccgagg aggagttgcg
+      421 ccggcgcctg gcggatgccg acgcggcggt ggtgatgaag ctcggccgca atttcgacaa
+      481 ggtccgccgc gtgctggtcg agcttggcct cgagcgccgc gcgctgtacg tcgagcgggc
+      541 gaccatggcc aaccagcgga tcgtgccgtt ggaacgggtg gagccgatgg cctcgccgta
+      601 cttctcgctg atcgtcgtcc ccggcgacaa gtggcaggga ggggccggcg gtgagtgacg
+      661 cccagcaggt tccggccatc gtcatcctcg gccagggcgc gctggatacc gcgcggcggg
+      721 tccaggcgcg ctatcccggg gcgctggtcc acgggctcgc cgggcgggtc gaggccgacc
+      781 gttcctatac ggacttcggc gacaccctgc gcgaactgta ttgcgccgac cgcccgatcg
+      841 tcgccctgtg cgccgccggc atcgtcattc gcagcctggc gccgttgttg caacgcaagg
+      901 gagcggagcc gccggtgctg gccctggccg aggacggcag cgcggtggtg ccgctgctcg
+      961 gcgggctggc cggggtcaac cggctggcgc gggaaatcgg cgaggtgctg gccgtggcgc
+     1021 cggcgatcac caccagcggc gagctgcgct tcggcacctg cgtgctcaac ccgcccgccg
+     1081 gttatgtcct ggccgacctg gagcagggca agcgcttcgt tgccgatttg ctcggtggcc
+     1141 agccggtgcg cgtcgagggt gccgccgact ggctcgacgc ggcccgtttg ccgcgcgacc
+     1201 cggaggcagc gctggcgatt cacgtgacgc cctcggcgcg tgcgccgcgg gccgaggaac
+     1261 tgctgatcca tccgcgctgc gtgctggcgg cgctcga
+//

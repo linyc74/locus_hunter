@@ -65,6 +65,8 @@ class GetLociFromChromosome(Processor):
         self.extension = extension
 
         self.set_cds_features()
+        if len(self.cds_features) == 0:
+            return []
 
         cds_ids = self.get_cds_ids()
         intervals = self.get_intervals(cds_ids)

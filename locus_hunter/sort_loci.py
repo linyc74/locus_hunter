@@ -187,7 +187,7 @@ class SmithWatermanAligner:
 
         L1, L2 = list1, list2
 
-        M = np.zeros((len(L1) + 1, len(L2) + 1), dtype=np.int)
+        M = np.zeros((len(L1) + 1, len(L2) + 1), dtype=np.int32)
 
         for r in range(len(L1)):
             M[r + 1, 0] = M[r, 0] + self.END_GAP_SCORE

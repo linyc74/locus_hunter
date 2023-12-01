@@ -40,4 +40,4 @@ class TestBlastp(TestCase):
 
         expected = pd.read_csv(f'{self.indir}/output.csv')
 
-        self.assertTrue(df.equals(expected))
+        self.assertDataFrameEqual(df, expected)

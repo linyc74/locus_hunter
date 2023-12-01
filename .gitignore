@@ -9,3 +9,5 @@ __pycache__/
 .coverage
 .coveralls.yml
 htmlcov/
+
+todo.md

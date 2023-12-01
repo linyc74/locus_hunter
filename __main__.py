@@ -2,7 +2,7 @@ import argparse
 import locus_hunter
 
 
-__version__ = '1.0.4-beta'
+__version__ = '1.0.5'
 
 
 class EntryPoint:

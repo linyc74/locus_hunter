@@ -2,7 +2,117 @@ import argparse
 import locus_hunter
 
 
-__version__ = '1.0.6-beta'
+__VERSION__ = '1.1.0-beta'
+
+
+PROG = 'python locus_hunter'
+DESCRIPTION = f'Locus Hunter (version {__VERSION__}) by Yu-Cheng Lin (ylin@nycu.edu.tw)'
+DEPENDENCIES = '\n  '.join([
+    'python (>=3.6)',
+    'numpy (1.17.2)',
+    'pandas (0.25.1)',
+    'ngslite (1.1.2)',
+    'dna_features_viewer (3.0.1)',
+    'blastp (2.5.0+)',
+    'CD-HIT (4.8.1)',
+])
+EPILOG = f'dependency:\n  {DEPENDENCIES}'
+REQUIRED = [
+    {
+        'keys': ['-q', '--query-faa'],
+        'properties': {
+            'type': str,
+            'required': True,
+            'help': 'path to the query fasta file',
+        }
+    },
+    {
+        'keys': ['-g', '--gbk-dir'],
+        'properties': {
+            'type': str,
+            'required': True,
+            'help': 'path to the genbank folder',
+        }
+    },
+]
+OPTIONAL = [
+    {
+        'keys': ['-e', '--evalue'],
+        'properties': {
+            'type': float,
+            'required': False,
+            'default': 1e-20,
+            'help': 'E-value for blastp (default: %(default)s)',
+        }
+    },
+    {
+        'keys': ['-x', '--extension'],
+        'properties': {
+            'type': int,
+            'required': False,
+            'default': 5000,
+            'help': 'number of bp extended from each CDS hit (default: %(default)s)',
+        }
+    },
+    {
+        'keys': ['--ortholog-identity'],
+        'properties': {
+            'type': float,
+            'required': False,
+            'default': 0.9,
+            'help': 'identity (between 0 and 1) of orthologous genes (default: %(default)s)',
+        }
+    },
+    {
+        'keys': ['--label-attributes'],
+        'properties': {
+            'type': str,
+            'required': False,
+            'default': 'gene,locus_tag',
+            'help': 'attributes to be labeled (if any) on each CDS feature (default: %(default)s)',
+        }
+    },
+    {
+        'keys': ['-o', '--output'],
+        'properties': {
+            'type': str,
+            'required': False,
+            'default': 'output',
+            'help': 'name of output files (default: %(default)s)',
+        }
+    },
+    {
+        'keys': ['-t', '--threads'],
+        'properties': {
+            'type': int,
+            'required': False,
+            'default': 4,
+            'help': 'number of CPU threads (default: %(default)s)',
+        }
+    },
+    {
+        'keys': ['-d', '--debug'],
+        'properties': {
+            'action': 'store_true',
+            'help': 'debug mode',
+        }
+    },
+    {
+        'keys': ['-h', '--help'],
+        'properties': {
+            'action': 'help',
+            'help': 'show this help message',
+        }
+    },
+    {
+        'keys': ['-v', '--version'],
+        'properties': {
+            'action': 'version',
+            'version': __VERSION__,
+            'help': 'show version',
+        }
+    },
+]
 
 
 class EntryPoint:
@@ -26,75 +136,36 @@ class EntryPoint:
             debug=args.debug)
 
     def set_parser(self):
-        prog = 'python locus_hunter'
-
-        description = f'Locus Hunter (v{__version__}) by Yu-Cheng Lin (yclin.python@gmail.com)'
-
-        dependencies = '\n  '.join([
-            'python (>=3.6)',
-            'numpy (1.17.2)',
-            'pandas (0.25.1)',
-            'ngslite (1.1.2)',
-            'dna_features_viewer (3.0.1)',
-            'blastp (2.5.0+)',
-            'CD-HIT (4.8.1)',
-        ])
-
-        epilog = f'dependency:\n  {dependencies}'
-
         self.parser = argparse.ArgumentParser(
-            prog=prog,
-            description=description,
-            epilog=epilog,
+            prog=PROG,
+            description=DESCRIPTION,
+            epilog=EPILOG,
             add_help=False,
             formatter_class=argparse.RawTextHelpFormatter)
 
     def add_required_arguments(self):
         group = self.parser.add_argument_group('required arguments')
-
-        group.add_argument(
-            '-q', '--query-faa', type=str, required=True,
-            help='path to the query fasta file')
-
-        group.add_argument(
-            '-g', '--gbk-dir', type=str, required=True,
-            help='path to the genbank folder')
+        for item in REQUIRED:
+            group.add_argument(*item['keys'], **item['properties'])
 
     def add_optional_arguments(self):
         group = self.parser.add_argument_group('optional arguments')
-        default = '(default: %(default)s)'
+        for item in OPTIONAL:
+            group.add_argument(*item['keys'], **item['properties'])
 
-        group.add_argument(
-            '-e', '--evalue', type=float, required=False, default=1e-20,
-            help=f'E-value for blastp {default}')
-
-        group.add_argument(
-            '-x', '--extension', type=int, required=False, default=5000,
-            help=f'number of bp extended from each CDS hit {default}')
-
-        group.add_argument(
-            '-r', '--ortholog-identity', type=float, required=False, default=0.9,
-            help=f'identity (between 0 and 1) of orthologous genes {default}')
-
-        group.add_argument(
-            '--label-attributes', type=str, required=False, default='gene,locus_tag',
-            help=f'attributes to be labeled, if any, on each CDS feature {default}')
-
-        group.add_argument(
-            '-o', '--output', type=str, required=False, default='output',
-            help=f'name of output files {default}')
-
-        group.add_argument(
-            '-t', '--threads', type=int, required=False, default=4,
-            help=f'number of CPU threads {default}')
-
-        group.add_argument(
-            '-d', '--debug', action='store_true', help=f'debug mode')
-
-        group.add_argument(
-            '-h', '--help', action='help',
-            # default=SUPPRESS,
-            help='show this help message and exit')
+    def run(self):
+        args = self.parser.parse_args()
+        print(f'Start running Locus Hunter version {__VERSION__}\n', flush=True)
+        locus_hunter.main(
+            query_faa=args.query_faa,
+            gbk_dir=args.gbk_dir,
+            evalue=args.evalue,
+            extension=args.extension,
+            ortholog_identity=args.ortholog_identity,
+            label_attributes=args.label_attributes,
+            output=args.output,
+            threads=args.threads,
+            debug=args.debug)
 
 
 if __name__ == '__main__':

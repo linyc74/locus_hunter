@@ -28,7 +28,9 @@ class TestLocusHunter(TestCase):
             extension=5000,
             evalue=1e-20,
             ortholog_identity=0.9,
-            output=f'{self.outdir}/output')
+            label_attributes=['gene', 'locus_tag'],
+            output=f'{self.outdir}/output'
+        )
 
         remove_genbank_date_str(f'{self.outdir}/output.gbk')
 
@@ -44,4 +46,6 @@ class TestLocusHunter(TestCase):
             extension=5000,
             evalue=1e-20,
             ortholog_identity=0.9,
-            output=f'{self.outdir}/output')
+            label_attributes=['gene', 'locus_tag'],
+            output=f'{self.outdir}/output'
+        )

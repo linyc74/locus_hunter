@@ -15,6 +15,7 @@ class LocusHunter(Processor):
     evalue: float
     extension: int
     ortholog_identity: float
+    label_attributes: List[str]
     output: str
 
     loci: List[Chromosome]
@@ -30,6 +31,7 @@ class LocusHunter(Processor):
             evalue: float,
             extension: int,
             ortholog_identity: float,
+            label_attributes: List[str],
             output: str):
 
         self.query_faa = query_faa
@@ -69,7 +71,8 @@ class LocusHunter(Processor):
     def view_loci(self):
         ViewLoci(self.settings).main(
             loci=self.loci,
-            output=self.output)
+            output=self.output,
+            label_attributes=self.label_attributes)
 
     def save_genbank(self):
         self.remove_intermediate_labels()

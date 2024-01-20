@@ -20,6 +20,7 @@ class EntryPoint:
             evalue=args.evalue,
             extension=args.extension,
             ortholog_identity=args.ortholog_identity,
+            label_attributes=args.label_attributes,
             output=args.output,
             threads=args.threads,
             debug=args.debug)
@@ -74,6 +75,10 @@ class EntryPoint:
         group.add_argument(
             '-r', '--ortholog-identity', type=float, required=False, default=0.9,
             help=f'identity (between 0 and 1) of orthologous genes {default}')
+
+        group.add_argument(
+            '--label-attributes', type=str, required=False, default='gene,locus_tag',
+            help=f'attributes to be labeled, if any, on each CDS feature {default}')
 
         group.add_argument(
             '-o', '--output', type=str, required=False, default='output',

@@ -25,7 +25,9 @@ class TestViewLoci(TestCase):
 
         ViewLoci(self.settings).main(
             loci=loci,
-            output=output)
+            output=output,
+            label_attributes=['gene', 'locus_tag']
+        )
 
     def test_very_long_name(self):
         loci = read_genbank(file=f'{self.indir}/colored_loci.gbk')
@@ -35,7 +37,9 @@ class TestViewLoci(TestCase):
 
         ViewLoci(self.settings).main(
             loci=loci,
-            output=output)
+            output=output,
+            label_attributes=['gene', 'locus_tag']
+        )
 
 
 class TestChromosomeToGraphicRecord(TestCase):
@@ -54,7 +58,10 @@ class TestChromosomeToGraphicRecord(TestCase):
 
     def test_main(self):
         chromosome = read_genbank(file=f'{self.indir}/colored_loci.gbk')[0]
-        record = ChromosomeToGraphicRecord(self.settings).main(chromosome)
+        record = ChromosomeToGraphicRecord(self.settings).main(
+            chromosome=chromosome,
+            label_attributes=['gene', 'locus_tag']
+        )
 
         self.assertEqual(20536, record.sequence_length)
 
@@ -87,7 +94,9 @@ class TestGenericToGraphicFeature(TestCase):
             strand='+')
 
         graphic_feature = GenericToGraphicFeature(self.settings).main(
-            generic_feature=generic_feature)
+            generic_feature=generic_feature,
+            label_attributes=['gene', 'locus_tag']
+        )
 
         expected = 'GF(None, 1-99 (1))'
 

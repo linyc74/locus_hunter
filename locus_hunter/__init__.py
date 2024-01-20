@@ -11,6 +11,7 @@ def main(
         evalue: float,
         extension: int,
         ortholog_identity: float,
+        label_attributes: str,
         output: str,
         threads: int,
         debug: bool):
@@ -31,6 +32,7 @@ def main(
         evalue=evalue,
         extension=extension,
         ortholog_identity=ortholog_identity,
+        label_attributes=label_attributes.split(','),
         output=output)
 
     if not settings.debug:

@@ -16,6 +16,7 @@ class LocusHunter(Processor):
     extension: int
     ortholog_identity: float
     dereplicate_loci: bool
+    include_locus_names: List[str]
     label_attributes: List[str]
     output: str
 
@@ -33,6 +34,7 @@ class LocusHunter(Processor):
             extension: int,
             ortholog_identity: float,
             dereplicate_loci: bool,
+            include_locus_names: List[str],
             label_attributes: List[str],
             output: str):
 
@@ -42,6 +44,7 @@ class LocusHunter(Processor):
         self.extension = extension
         self.ortholog_identity = ortholog_identity
         self.dereplicate_loci = dereplicate_loci
+        self.include_locus_names = include_locus_names
         self.label_attributes = label_attributes
         self.output = output
 
@@ -67,7 +70,8 @@ class LocusHunter(Processor):
         self.loci = SortLoci(self.settings).main(
             loci=self.loci,
             ortholog_identity=self.ortholog_identity,
-            dereplicate_loci=self.dereplicate_loci)
+            dereplicate_loci=self.dereplicate_loci,
+            include_locus_names=self.include_locus_names)
 
     def add_color(self):
         self.loci = AddColor(self.settings).main(

@@ -13,6 +13,7 @@ class SortLoci(Processor):
     loci: List[Chromosome]
     ortholog_identity: float
     dereplicate_loci: bool
+    include_locus_names: List[str]
 
     def __init__(self, settings: Settings):
         super().__init__(settings=settings)
@@ -21,11 +22,13 @@ class SortLoci(Processor):
             self,
             loci: List[Chromosome],
             ortholog_identity: float,
-            dereplicate_loci: bool) -> List[Chromosome]:
+            dereplicate_loci: bool,
+            include_locus_names: List[str]) -> List[Chromosome]:
 
         self.loci = loci
         self.ortholog_identity = ortholog_identity
         self.dereplicate_loci = dereplicate_loci
+        self.include_locus_names = include_locus_names
 
         self.assign_ortholog_id()
         self.dereplicate_loci_by_identical_ortholog_ids()
@@ -41,7 +44,8 @@ class SortLoci(Processor):
     def dereplicate_loci_by_identical_ortholog_ids(self):
         if self.dereplicate_loci:
             self.loci = DereplicateLociByIdenticalOrthologIDs(self.settings).main(
-                loci=self.loci)
+                loci=self.loci,
+                include_locus_names=self.include_locus_names)
 
     def sort_loci_by_comparison(self):
         self.loci = SortLociByComparison(self.settings).main(
@@ -106,13 +110,19 @@ class AssignOrthologId(Processor):
 class DereplicateLociByIdenticalOrthologIDs(Processor):
 
     loci: List[Chromosome]
+    include_locus_names: List[str]
 
     ortholog_ids_to_loci: Dict[str, List[Chromosome]]
 
     dereplicated_loci: List[Chromosome]
 
-    def main(self, loci: List[Chromosome]) -> List[Chromosome]:
+    def main(
+            self,
+            loci: List[Chromosome],
+            include_locus_names: List[str]) -> List[Chromosome]:
+
         self.loci = loci
+        self.include_locus_names = include_locus_names
 
         self.set_ortholog_ids_to_loci()
         self.dereplicate()
@@ -127,8 +137,19 @@ class DereplicateLociByIdenticalOrthologIDs(Processor):
 
     def dereplicate(self):
         self.dereplicated_loci = []
-        for locus in self.ortholog_ids_to_loci.values():
-            self.dereplicated_loci.append(locus[0])
+        for loci in self.ortholog_ids_to_loci.values():
+
+            self.dereplicated_loci.append(loci[0])  # always include the first locus
+
+            for locus in loci[1:]:  # after the first locus, look for the locus names to be included
+                if self.__should_be_included(locus=locus):
+                    self.dereplicated_loci.append(locus)
+
+    def __should_be_included(self, locus: Chromosome) -> bool:
+        for locus_name in self.include_locus_names:
+            if locus_name in locus.seqname:
+                return True
+        return False
 
 
 def locus_to_ortholog_ids(chromosome: Chromosome) -> str:

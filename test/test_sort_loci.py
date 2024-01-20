@@ -18,7 +18,9 @@ class TestSortLoci(TestCase):
         sorted_loci = SortLoci(settings=self.settings).main(
             loci=loci,
             ortholog_identity=0.9,
-            dereplicate_loci=True)
+            dereplicate_loci=True,
+            include_locus_names=['Pseudomonas_aeruginosa_UCBPP-PA14_109']
+        )
 
         write_genbank(
             data=sorted_loci,

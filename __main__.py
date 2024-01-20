@@ -60,13 +60,13 @@ OPTIONAL = [
             'help': 'dereplicate loci with identical sequence of orthologous genes',
         }
     },
-    {  # to be implemented
-        'keys': ['--include-gbks'],
+    {
+        'keys': ['--include-locus-names'],
         'properties': {
             'type': str,
             'required': False,
             'default': 'None',
-            'help': 'comma-separated genbank names that have to be included during dereplication (default: %(default)s)',
+            'help': 'comma-separated locus names to be included during dereplication (default: %(default)s)',
         }
     },
     {
@@ -129,17 +129,7 @@ class EntryPoint:
         self.set_parser()
         self.add_required_arguments()
         self.add_optional_arguments()
-        args = self.parser.parse_args()
-        locus_hunter.main(
-            query_faa=args.query_faa,
-            gbk_dir=args.gbk_dir,
-            evalue=args.evalue,
-            extension=args.extension,
-            ortholog_identity=args.ortholog_identity,
-            label_attributes=args.label_attributes,
-            output=args.output,
-            threads=args.threads,
-            debug=args.debug)
+        self.run()
 
     def set_parser(self):
         self.parser = argparse.ArgumentParser(
@@ -168,6 +158,7 @@ class EntryPoint:
             extension=args.extension,
             ortholog_identity=args.ortholog_identity,
             dereplicate_loci=args.dereplicate_loci,
+            include_locus_names=args.include_locus_names,
             label_attributes=args.label_attributes,
             output=args.output,
             threads=args.threads,

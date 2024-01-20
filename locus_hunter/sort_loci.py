@@ -12,6 +12,7 @@ class SortLoci(Processor):
 
     loci: List[Chromosome]
     ortholog_identity: float
+    dereplicate_loci: bool
 
     def __init__(self, settings: Settings):
         super().__init__(settings=settings)
@@ -19,12 +20,15 @@ class SortLoci(Processor):
     def main(
             self,
             loci: List[Chromosome],
-            ortholog_identity: float) -> List[Chromosome]:
+            ortholog_identity: float,
+            dereplicate_loci: bool) -> List[Chromosome]:
 
         self.loci = loci
         self.ortholog_identity = ortholog_identity
+        self.dereplicate_loci = dereplicate_loci
 
         self.assign_ortholog_id()
+        self.dereplicate_loci_by_identical_ortholog_ids()
         self.sort_loci_by_comparison()
 
         return self.loci
@@ -33,6 +37,11 @@ class SortLoci(Processor):
         self.loci = AssignOrthologId(self.settings).main(
             loci=self.loci,
             ortholog_identity=self.ortholog_identity)
+
+    def dereplicate_loci_by_identical_ortholog_ids(self):
+        if self.dereplicate_loci:
+            self.loci = DereplicateLociByIdenticalOrthologIDs(self.settings).main(
+                loci=self.loci)
 
     def sort_loci_by_comparison(self):
         self.loci = SortLociByComparison(self.settings).main(
@@ -44,6 +53,9 @@ class AssignOrthologId(Processor):
     loci: List[Chromosome]
     ortholog_identity: float
 
+    faa: str
+    cds_id_to_ortholog_id: Dict[str, int]
+
     def __init__(self, settings: Settings):
         super().__init__(settings=settings)
 
@@ -55,17 +67,17 @@ class AssignOrthologId(Processor):
         self.loci = loci
         self.ortholog_identity = ortholog_identity
 
-        faa = self.write_faa()
-        cds_ortholog_dict = self.create_orthologs_by_cd_hit(faa=faa)
-        self.add_ortholog_id(cds_ortholog_dict=cds_ortholog_dict)
+        self.write_faa()
+        self.create_orthologs_by_cd_hit()
+        self.add_ortholog_id_to_features()
 
         return self.loci
 
-    def write_faa(self) -> str:
+    def write_faa(self):
 
-        faa = f'{self.workdir}/loci.faa'
+        self.faa = f'{self.workdir}/loci.faa'
 
-        with FastaWriter(faa) as writer:
+        with FastaWriter(self.faa) as writer:
             for locus in self.loci:
                 for feature in locus.features:
                     cds_id = feature.get_attribute(key=CDS_ID_KEY)
@@ -73,22 +85,58 @@ class AssignOrthologId(Processor):
                     if seq is not None:
                         writer.write(header=cds_id, sequence=seq)
 
-        return faa
+        return self.faa
 
-    def create_orthologs_by_cd_hit(self, faa: str) -> Dict[str, int]:
-        return CdHit(self.settings).main(
-            faa=faa,
+    def create_orthologs_by_cd_hit(self):
+        self.cds_id_to_ortholog_id = CdHit(self.settings).main(
+            faa=self.faa,
             sequence_identity=self.ortholog_identity)
 
-    def add_ortholog_id(self, cds_ortholog_dict: Dict[str, int]):
+    def add_ortholog_id_to_features(self):
         for locus in self.loci:
             for feature in locus.features:
                 cds_id = feature.get_attribute(CDS_ID_KEY)
-                ortholog_id = cds_ortholog_dict.get(cds_id, None)
+                ortholog_id = self.cds_id_to_ortholog_id.get(cds_id, None)
                 if ortholog_id is not None:
                     feature.add_attribute(
                         key=ORTHOLOG_ID_KEY,
                         val=ortholog_id)
+
+
+class DereplicateLociByIdenticalOrthologIDs(Processor):
+
+    loci: List[Chromosome]
+
+    ortholog_ids_to_loci: Dict[str, List[Chromosome]]
+
+    dereplicated_loci: List[Chromosome]
+
+    def main(self, loci: List[Chromosome]) -> List[Chromosome]:
+        self.loci = loci
+
+        self.set_ortholog_ids_to_loci()
+        self.dereplicate()
+
+        return self.dereplicated_loci
+
+    def set_ortholog_ids_to_loci(self):
+        self.ortholog_ids_to_loci = {}
+        for locus in self.loci:
+            ortholog_ids = locus_to_ortholog_ids(locus)
+            self.ortholog_ids_to_loci.setdefault(ortholog_ids, []).append(locus)
+
+    def dereplicate(self):
+        self.dereplicated_loci = []
+        for locus in self.ortholog_ids_to_loci.values():
+            self.dereplicated_loci.append(locus[0])
+
+
+def locus_to_ortholog_ids(chromosome: Chromosome) -> str:
+    ortholog_ids = []
+    for feature in chromosome.features:
+        ortholog_id = str(feature.get_attribute(ORTHOLOG_ID_KEY))  # can be None, so convert to str
+        ortholog_ids.append(ortholog_id)
+    return ','.join(ortholog_ids)
 
 
 class SortLociByComparison(Processor):

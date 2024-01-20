@@ -15,6 +15,7 @@ htmlcov/
 
 # Test / data
 .pytest_cache/
+test/test_*/
 test/*outdir*/
 test/*workdir*/
 

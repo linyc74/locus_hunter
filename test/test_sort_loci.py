@@ -17,7 +17,8 @@ class TestSortLoci(TestCase):
 
         sorted_loci = SortLoci(settings=self.settings).main(
             loci=loci,
-            ortholog_identity=0.9)
+            ortholog_identity=0.9,
+            dereplicate_loci=True)
 
         write_genbank(
             data=sorted_loci,

@@ -54,12 +54,28 @@ OPTIONAL = [
         }
     },
     {
+        'keys': ['--dereplicate-loci'],
+        'properties': {
+            'action': 'store_true',
+            'help': 'dereplicate loci with identical sequence of orthologous genes',
+        }
+    },
+    {  # to be implemented
+        'keys': ['--include-gbks'],
+        'properties': {
+            'type': str,
+            'required': False,
+            'default': 'None',
+            'help': 'comma-separated genbank names that have to be included during dereplication (default: %(default)s)',
+        }
+    },
+    {
         'keys': ['--label-attributes'],
         'properties': {
             'type': str,
             'required': False,
             'default': 'gene,locus_tag',
-            'help': 'attributes to be labeled (if any) on each CDS feature (default: %(default)s)',
+            'help': 'comma-separated attributes to be labeled on each CDS feature (default: %(default)s)',
         }
     },
     {
@@ -151,6 +167,7 @@ class EntryPoint:
             evalue=args.evalue,
             extension=args.extension,
             ortholog_identity=args.ortholog_identity,
+            dereplicate_loci=args.dereplicate_loci,
             label_attributes=args.label_attributes,
             output=args.output,
             threads=args.threads,

@@ -11,6 +11,7 @@ def main(
         evalue: float,
         extension: int,
         ortholog_identity: float,
+        dereplicate_loci: bool,
         label_attributes: str,
         output: str,
         threads: int,
@@ -32,6 +33,7 @@ def main(
         evalue=evalue,
         extension=extension,
         ortholog_identity=ortholog_identity,
+        dereplicate_loci=dereplicate_loci,
         label_attributes=label_attributes.split(','),
         output=output)
 

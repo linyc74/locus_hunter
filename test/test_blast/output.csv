@@ -1,2 +1,0 @@
-query,subject,percent_id,length,mismatch,gapopen,qstart,qend,sstart,send,evalue,bitscore
-WP_001862796.1,WP_001862796.1,39.431,246,14,7,25,153,117,344,3.1e-38,121

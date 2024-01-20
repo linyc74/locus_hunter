@@ -7,16 +7,6 @@ __VERSION__ = '1.1.0-beta'
 
 PROG = 'python locus_hunter'
 DESCRIPTION = f'Locus Hunter (version {__VERSION__}) by Yu-Cheng Lin (ylin@nycu.edu.tw)'
-DEPENDENCIES = '\n  '.join([
-    'python (>=3.6)',
-    'numpy (1.17.2)',
-    'pandas (0.25.1)',
-    'ngslite (1.1.2)',
-    'dna_features_viewer (3.0.1)',
-    'blastp (2.5.0+)',
-    'CD-HIT (4.8.1)',
-])
-EPILOG = f'dependency:\n  {DEPENDENCIES}'
 REQUIRED = [
     {
         'keys': ['-q', '--query-faa'],
@@ -139,7 +129,6 @@ class EntryPoint:
         self.parser = argparse.ArgumentParser(
             prog=PROG,
             description=DESCRIPTION,
-            epilog=EPILOG,
             add_help=False,
             formatter_class=argparse.RawTextHelpFormatter)
 

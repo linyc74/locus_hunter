@@ -52,7 +52,7 @@ class TestChromosomeToGraphicRecord(TestCase):
         self.assertEqual(20536, record.sequence_length)
 
         first_three = str(record.features[0:3])
-        expected = '[GF(None, 211-1386 (1)), GF(None, 1546-1998 (1)), GF(None, 2018-2515 (-1))]'
+        expected = '[GF(HP_RS05040, 211-1386 (1)), GF(fur, 1546-1998 (1)), GF(HP_RS05050, 2018-2515 (-1))]'
         self.assertEqual(expected, first_three)
 
 

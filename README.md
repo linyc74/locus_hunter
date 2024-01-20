@@ -6,8 +6,11 @@ this package finds genomic loci that contains any of the query proteins.
 It outputs a genbank file containing all loci, and a figure in both PDF and PNG format.
 
 ### Usage
-    git clone https://github.com/linyc74/locus_hunter.git
-    python locus_hunter -q PATH/TO/QUERY.FAA -g PATH/TO/GENBANK_DIR
+
+```bash
+git clone https://github.com/linyc74/locus_hunter.git
+python locus_hunter -q PATH/TO/QUERY.FAA -g PATH/TO/GENBANK_DIR
+```
 
 Genbank filenames in the folder `GENBANK_DIR` should not contain any blank space, e.g. `E coli.gbk` is not allowed.
 
@@ -18,5 +21,7 @@ For Windows users, [Windows Subsystem for Linux](https://docs.microsoft.com/en-u
 
 Once Anaconda is set up, install the following packages in the terminal:
 
-    pip install ngslite dna_features_viewer
-    conda install -c bioconda blast CD-HIT
+```bash
+pip install numpy pandas scipy ngslite dna_features_viewer
+conda install -c bioconda blast cd-hit
+```

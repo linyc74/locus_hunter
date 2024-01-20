@@ -39,6 +39,7 @@ class LocusHunter(Processor):
         self.evalue = evalue
         self.extension = extension
         self.ortholog_identity = ortholog_identity
+        self.label_attributes = label_attributes
         self.output = output
 
         self.extract_loci()

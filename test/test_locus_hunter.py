@@ -20,6 +20,8 @@ class TestLocusHunter(TestCase):
             extension=5000,
             evalue=1e-20,
             ortholog_identity=0.9,
+            dereplicate_loci=True,
+            include_locus_names=[],
             label_attributes=['gene', 'locus_tag'],
             output=f'{self.outdir}/output'
         )
@@ -38,6 +40,8 @@ class TestLocusHunter(TestCase):
             extension=5000,
             evalue=1e-20,
             ortholog_identity=0.9,
+            dereplicate_loci=True,
+            include_locus_names=[],
             label_attributes=['gene', 'locus_tag'],
             output=f'{self.outdir}/output'
         )

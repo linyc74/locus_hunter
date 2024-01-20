@@ -15,9 +15,6 @@ class SortLoci(Processor):
     dereplicate_loci: bool
     include_locus_names: List[str]
 
-    def __init__(self, settings: Settings):
-        super().__init__(settings=settings)
-
     def main(
             self,
             loci: List[Chromosome],
@@ -59,9 +56,6 @@ class AssignOrthologId(Processor):
 
     faa: str
     cds_id_to_ortholog_id: Dict[str, int]
-
-    def __init__(self, settings: Settings):
-        super().__init__(settings=settings)
 
     def main(
             self,
@@ -155,18 +149,22 @@ class DereplicateLociByIdenticalOrthologIDs(Processor):
 def locus_to_ortholog_ids(chromosome: Chromosome) -> str:
     ortholog_ids = []
     for feature in chromosome.features:
-        ortholog_id = str(feature.get_attribute(ORTHOLOG_ID_KEY))  # can be None, so convert to str
-        ortholog_ids.append(ortholog_id)
+        orid = str(feature.get_attribute(ORTHOLOG_ID_KEY))  # can be None, so convert to str
+        ortholog_ids.append(orid)
     return ','.join(ortholog_ids)
 
 
 class SortLociByComparison(Processor):
 
+    LINKAGE_METHOD = 'average'
+
     loci: List[Chromosome]
 
     locus_id_to_ortholog_ids: Dict[str, List[int]]
-
-    linkage_method = 'average'
+    distance_matrix: np.ndarray
+    linkage_matrix: np.ndarray
+    idx_order: List[int]
+    sorted_loci: List[Chromosome]
 
     def __init__(self, settings: Settings):
         super().__init__(settings=settings)
@@ -177,14 +175,14 @@ class SortLociByComparison(Processor):
             loci: List[Chromosome]) -> List[Chromosome]:
 
         self.loci = loci
+
         self.set_locus_id_to_ortholog_ids()
+        self.set_condensed_distance_matrix()
+        self.set_linkage_matrix()
+        self.plot_tree_and_set_idx_order()
+        self.set_sorted_loci()
 
-        distance_matrix = self.get_condensed_distance_matrix()
-        linkage_matrix = self.get_linkage_matrix(distance_matrix)
-        idx_order = self.plot_tree_and_get_idx_order(linkage_matrix)
-        sorted_loci = self.get_sorted_loci(idx_order)
-
-        return sorted_loci
+        return self.sorted_loci
 
     def set_locus_id_to_ortholog_ids(self):
         d = {}
@@ -201,7 +199,7 @@ class SortLociByComparison(Processor):
 
         self.locus_id_to_ortholog_ids = d
 
-    def get_condensed_distance_matrix(self) -> np.ndarray:
+    def set_condensed_distance_matrix(self):
 
         # condensed distance matrix:
         #   1-D array of pairs following the order given by combinations()
@@ -216,28 +214,21 @@ class SortLociByComparison(Processor):
 
             similarity_matrix.append(s)
 
-        distance_matrix = np.exp(-np.array(similarity_matrix))
+        self.distance_matrix = np.exp(-np.array(similarity_matrix))
 
-        return distance_matrix
+    def set_linkage_matrix(self):
+        self.linkage_matrix = hierarchy.linkage(self.distance_matrix, self.LINKAGE_METHOD)
 
-    def get_linkage_matrix(self, distance_matrix: np.ndarray) -> np.ndarray:
-        linkage_matrix = hierarchy.linkage(distance_matrix, self.linkage_method)
-        return linkage_matrix
-
-    def plot_tree_and_get_idx_order(
-            self, linkage_matrix: np.ndarray) -> List[int]:
-
+    def plot_tree_and_set_idx_order(self):
         idx_order = hierarchy.dendrogram(
-            Z=linkage_matrix,
+            Z=self.linkage_matrix,
             orientation='top'  # root on top
         )['ivl']  # 'ivl': a list of labels corresponding to the leaf nodes
 
-        idx_order = list(map(int, idx_order))
+        self.idx_order = list(map(int, idx_order))
 
-        return idx_order
-
-    def get_sorted_loci(self, idx_order: List[int]) -> List[Chromosome]:
-        return [self.loci[i] for i in idx_order]
+    def set_sorted_loci(self):
+        self.sorted_loci = [self.loci[i] for i in self.idx_order]
 
 
 class SmithWatermanAligner:

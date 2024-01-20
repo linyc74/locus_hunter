@@ -4,7 +4,7 @@ from .sort_loci import SortLoci
 from .add_color import AddColor
 from .view_loci import ViewLoci
 from .extract_loci import ExtractLoci
-from .template import Settings, Processor
+from .template import Processor
 from .constant import CDS_ID_KEY, ORTHOLOG_ID_KEY
 
 
@@ -21,10 +21,6 @@ class LocusHunter(Processor):
     output: str
 
     loci: List[Chromosome]
-
-    def __init__(self, settings: Settings):
-        super().__init__(settings=settings)
-        self.loci = []
 
     def main(
             self,

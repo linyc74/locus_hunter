@@ -1,9 +1,7 @@
-import shutil
 import random
 from ngslite import read_genbank, write_genbank
-from locus_hunter.template import Settings
 from locus_hunter.add_color import ColorDictGenerator, AddColor
-from .tools import TestCase, setup_dir, remove_genbank_date_str
+from .setup import TestCase, remove_genbank_date_str
 
 
 class TestColorDictGenerator(TestCase):
@@ -24,16 +22,10 @@ class TestColorDictGenerator(TestCase):
 class TestAddColor(TestCase):
 
     def setUp(self):
-        self.indir, self.workdir, self.outdir = setup_dir(__file__)
-        self.settings = Settings(
-            workdir=self.workdir,
-            outdir=self.outdir,
-            threads=4,
-            debug=True)
+        self.set_up(py_path=__file__)
 
     def tearDown(self):
-        shutil.rmtree(self.workdir)
-        shutil.rmtree(self.outdir)
+        self.tear_down()
 
     def test_main(self):
 
@@ -52,5 +44,6 @@ class TestAddColor(TestCase):
         remove_genbank_date_str(f'{self.outdir}/colored_loci.gbk')
 
         self.assertFileEqual(
-            file1=f'{self.indir}/colored_loci.gbk',
-            file2=f'{self.outdir}/colored_loci.gbk')
+            first=f'{self.indir}/colored_loci.gbk',
+            second=f'{self.outdir}/colored_loci.gbk'
+        )

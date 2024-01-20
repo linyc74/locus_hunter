@@ -1,22 +1,15 @@
 import shutil
-from locus_hunter.template import Settings
 from locus_hunter.cd_hit import CdHit
-from .tools import setup_dir, TestCase
+from .setup import TestCase
 
 
 class TestCdHit(TestCase):
 
     def setUp(self):
-        self.indir, self.workdir, self.outdir = setup_dir(__file__)
-        self.settings = Settings(
-            workdir=self.workdir,
-            outdir=self.outdir,
-            threads=4,
-            debug=True)
+        self.set_up(py_path=__file__)
 
     def tearDown(self):
-        shutil.rmtree(self.workdir)
-        shutil.rmtree(self.outdir)
+        self.tear_down()
 
     def test_main(self):
         actual = CdHit(self.settings).main(

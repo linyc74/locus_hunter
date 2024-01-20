@@ -1,23 +1,15 @@
-import shutil
 from ngslite import read_genbank, GenericFeature
-from locus_hunter.template import Settings
 from locus_hunter.view_loci import GenericToGraphicFeature, ChromosomeToGraphicRecord, ViewLoci
-from .tools import setup_dir, TestCase
+from .setup import TestCase
 
 
 class TestViewLoci(TestCase):
 
     def setUp(self):
-        self.indir, self.workdir, self.outdir = setup_dir(__file__)
-        self.settings = Settings(
-            workdir=self.workdir,
-            outdir=self.outdir,
-            threads=4,
-            debug=True)
+        self.set_up(py_path=__file__)
 
     def tearDown(self):
-        shutil.rmtree(self.workdir)
-        shutil.rmtree(self.outdir)
+        self.tear_down()
 
     def test_main(self):
         loci = read_genbank(file=f'{self.indir}/colored_loci.gbk')
@@ -45,16 +37,10 @@ class TestViewLoci(TestCase):
 class TestChromosomeToGraphicRecord(TestCase):
 
     def setUp(self):
-        self.indir, self.workdir, self.outdir = setup_dir(__file__)
-        self.settings = Settings(
-            workdir=self.workdir,
-            outdir=self.outdir,
-            threads=4,
-            debug=True)
+        self.set_up(py_path=__file__)
 
     def tearDown(self):
-        shutil.rmtree(self.workdir)
-        shutil.rmtree(self.outdir)
+        self.tear_down()
 
     def test_main(self):
         chromosome = read_genbank(file=f'{self.indir}/colored_loci.gbk')[0]
@@ -73,16 +59,10 @@ class TestChromosomeToGraphicRecord(TestCase):
 class TestGenericToGraphicFeature(TestCase):
 
     def setUp(self):
-        self.indir, self.workdir, self.outdir = setup_dir(__file__)
-        self.settings = Settings(
-            workdir=self.workdir,
-            outdir=self.outdir,
-            threads=4,
-            debug=True)
+        self.set_up(py_path=__file__)
 
     def tearDown(self):
-        shutil.rmtree(self.workdir)
-        shutil.rmtree(self.outdir)
+        self.tear_down()
 
     def test_main(self):
 

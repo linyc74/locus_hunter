@@ -1,23 +1,15 @@
-import shutil
 from ngslite import read_genbank, write_genbank
-from locus_hunter.template import Settings
 from locus_hunter.sort_loci import SortLoci, SmithWatermanAligner
-from .tools import setup_dir, TestCase, remove_genbank_date_str
+from .setup import TestCase, remove_genbank_date_str
 
 
 class TestSortLoci(TestCase):
 
     def setUp(self):
-        self.indir, self.workdir, self.outdir = setup_dir(__file__)
-        self.settings = Settings(
-            workdir=self.workdir,
-            outdir=self.outdir,
-            threads=4,
-            debug=True)
+        self.set_up(py_path=__file__)
 
     def tearDown(self):
-        shutil.rmtree(self.workdir)
-        shutil.rmtree(self.outdir)
+        self.tear_down()
 
     def test_main(self):
 
@@ -35,8 +27,8 @@ class TestSortLoci(TestCase):
         remove_genbank_date_str(f'{self.outdir}/sorted_loci.gbk')
 
         self.assertFileEqual(
-            file1=f'{self.indir}/sorted_loci.gbk',
-            file2=f'{self.outdir}/sorted_loci.gbk')
+            first=f'{self.indir}/sorted_loci.gbk',
+            second=f'{self.outdir}/sorted_loci.gbk')
 
 
 class TestSmithWatermanAligner(TestCase):

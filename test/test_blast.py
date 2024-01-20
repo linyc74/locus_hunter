@@ -1,24 +1,16 @@
-import shutil
 import pandas as pd
 from ngslite import read_fasta
-from locus_hunter.template import Settings
 from locus_hunter.blast import Blastp
-from .tools import setup_dir, TestCase
+from .setup import TestCase
 
 
 class TestBlastp(TestCase):
 
     def setUp(self):
-        self.indir, self.workdir, self.outdir = setup_dir(__file__)
-        self.settings = Settings(
-            workdir=self.workdir,
-            outdir=self.outdir,
-            threads=4,
-            debug=True)
+        self.set_up(py_path=__file__)
 
     def tearDown(self):
-        shutil.rmtree(self.workdir)
-        shutil.rmtree(self.outdir)
+        self.tear_down()
 
     def test_no_hit(self):
 

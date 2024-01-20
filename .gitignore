@@ -5,9 +5,17 @@ __pycache__/
 # PyCharm
 .idea/
 
+# Mac OS
+.DS_Store
+
 # Misc
 .coverage
 .coveralls.yml
 htmlcov/
+
+# Test / data
+.pytest_cache/
+test/*outdir*/
+test/*workdir*/
 
 todo.md

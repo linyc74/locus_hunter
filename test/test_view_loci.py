@@ -49,10 +49,10 @@ class TestChromosomeToGraphicRecord(TestCase):
             label_attributes=['gene', 'locus_tag']
         )
 
-        self.assertEqual(20536, record.sequence_length)
+        self.assertEqual(11143, record.sequence_length)
 
         first_three = str(record.features[0:3])
-        expected = '[GF(HP_RS05040, 211-1386 (1)), GF(fur, 1546-1998 (1)), GF(HP_RS05050, 2018-2515 (-1))]'
+        expected = '[GF(AK972_RS05835, 2936-4651 (-1)), GF(AK972_RS05840, 5001-6143 (-1)), GF(AK972_RS05845, 6252-7160 (1))]'
         self.assertEqual(expected, first_three)
 
 

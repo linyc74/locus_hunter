@@ -78,6 +78,8 @@ class AssignOrthologId(Processor):
         with FastaWriter(self.faa) as writer:
             for locus in self.loci:
                 for feature in locus.features:
+                    if feature.type != 'CDS':
+                        continue
                     cds_id = feature.get_attribute(key=CDS_ID_KEY)
                     seq = feature.get_attribute(key='translation')
                     if seq is not None:
@@ -93,6 +95,8 @@ class AssignOrthologId(Processor):
     def add_ortholog_id_to_features(self):
         for locus in self.loci:
             for feature in locus.features:
+                if feature.type != 'CDS':
+                    continue
                 cds_id = feature.get_attribute(CDS_ID_KEY)
                 ortholog_id = self.cds_id_to_ortholog_id.get(cds_id, None)
                 if ortholog_id is not None:
@@ -154,6 +158,8 @@ class DereplicateLociByIdenticalOrthologIDs(Processor):
 def locus_to_ortholog_ids(chromosome: Chromosome) -> str:
     ortholog_ids = []
     for feature in chromosome.features:
+        if feature.type != 'CDS':
+            continue
         orid = str(feature.get_attribute(ORTHOLOG_ID_KEY))  # can be None, so convert to str
         ortholog_ids.append(orid)
     return ','.join(ortholog_ids)
@@ -196,6 +202,8 @@ class SortLociByComparison(Processor):
 
             orthologs = []
             for feature in locus.features:
+                if feature != 'CDS':
+                    continue
                 ortholog_id = feature.get_attribute(key=ORTHOLOG_ID_KEY)
                 if ortholog_id is not None:
                     orthologs.append(ortholog_id)

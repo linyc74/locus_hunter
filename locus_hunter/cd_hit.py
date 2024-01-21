@@ -1,5 +1,5 @@
 from typing import Dict
-from .tools import Caller, get_temp_path
+from .tools import get_temp_path
 from .template import Processor, Settings
 
 
@@ -8,11 +8,8 @@ class CdHit(Processor):
     faa: str
     sequence_identity: float
 
-    caller: Caller
-
     def __init__(self, settings: Settings):
         super().__init__(settings=settings)
-        self.caller = Caller(self.settings)
 
     def main(
             self,
@@ -29,15 +26,16 @@ class CdHit(Processor):
 
     def run_cd_hit(self) -> str:
         output = get_temp_path(prefix=f'{self.workdir}/cd_hit_output')
-        args = [
+        lines = [
             'cd-hit',
-            '-i', self.faa,
-            '-c', self.sequence_identity,
-            '-d', 0,
-            '-T', self.threads,
-            '-o', output,
+            f'-i {self.faa}',
+            f'-c {self.sequence_identity}',
+            '-d 0',
+            f'-T {self.threads}',
+            f'-o {output}',
         ]
-        self.caller.call(args)
+        cmd = self.CMD_LINEBREAK.join(lines)
+        self.call(cmd)
         return f'{output}.clstr'
 
     def read_clstr(self, file: str) -> Dict[str, int]:

@@ -1,7 +1,7 @@
 import pandas as pd
 from ngslite import write_fasta
 from typing import List, Tuple, Union
-from .tools import Caller, get_temp_path
+from .tools import get_temp_path
 from .template import Processor, Settings
 
 
@@ -17,8 +17,6 @@ class Blastp(Processor):
     query_faa: str
     library_faa: str
     db: str
-
-    caller: Caller
 
     output_columns = [
         'query',
@@ -37,7 +35,6 @@ class Blastp(Processor):
 
     def __init__(self, settings: Settings):
         super().__init__(settings=settings)
-        self.caller = Caller(self.settings)
 
     def main(
             self,
@@ -75,28 +72,30 @@ class Blastp(Processor):
     def set_db(self):
         logfile = get_temp_path(prefix=f'{self.workdir}/makeblastdb_log')
         self.db = get_temp_path(prefix=f'{self.workdir}/blastp_db')
-        args = [
+        lines = [
             'makeblastdb',
-            '-in', self.library_faa,
-            '-dbtype', 'prot',
-            '-logfile', logfile,
-            '-out', self.db
+            f'-in {self.library_faa}',
+            '-dbtype prot',
+            f'-logfile {logfile}',
+            f'-out {self.db}',
         ]
-        self.caller.call(args)
+        cmd = self.CMD_LINEBREAK.join(lines)
+        self.call(cmd)
 
     def run_blastp(self) -> pd.DataFrame:
         blastp_output = get_temp_path(f'{self.workdir}/blastp', '.tsv')
 
-        args = [
+        lines = [
             'blastp',
-            '-query', self.query_faa,
-            '-db', self.db,
-            '-evalue', self.evalue,
-            '-outfmt', 6,
-            '-num_threads', self.threads,
-            '-out', blastp_output,
+            f'-query {self.query_faa}',
+            f'-db {self.db}',
+            f'-evalue {self.evalue}',
+            f'-outfmt 6',
+            f'-num_threads {self.threads}',
+            f'-out {blastp_output}',
         ]
-        self.caller.call(args)
+        cmd = self.CMD_LINEBREAK.join(lines)
+        self.call(cmd)
 
         df = pd.read_csv(
             blastp_output, sep='\t', names=self.output_columns)

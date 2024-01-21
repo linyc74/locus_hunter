@@ -119,7 +119,8 @@ class DereplicateLociByIdenticalOrthologIDs(Processor):
         self.include_locus_names = include_locus_names
 
         self.set_ortholog_ids_to_loci()
-        self.dereplicate()
+        self.pick_loci()
+        self.log_info()
 
         return self.dereplicated_loci
 
@@ -129,7 +130,7 @@ class DereplicateLociByIdenticalOrthologIDs(Processor):
             ortholog_ids = locus_to_ortholog_ids(locus)
             self.ortholog_ids_to_loci.setdefault(ortholog_ids, []).append(locus)
 
-    def dereplicate(self):
+    def pick_loci(self):
         self.dereplicated_loci = []
         for loci in self.ortholog_ids_to_loci.values():
 
@@ -144,6 +145,10 @@ class DereplicateLociByIdenticalOrthologIDs(Processor):
             if locus_name in locus.seqname:
                 return True
         return False
+
+    def log_info(self):
+        msg = f'Dereplicated {len(self.loci)} loci to {len(self.dereplicated_loci)} loci'
+        self.logger.info(msg)
 
 
 def locus_to_ortholog_ids(chromosome: Chromosome) -> str:

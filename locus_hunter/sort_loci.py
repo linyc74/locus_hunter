@@ -138,11 +138,14 @@ class DereplicateLociByIdenticalOrthologIDs(Processor):
         self.dereplicated_loci = []
         for loci in self.ortholog_ids_to_loci.values():
 
-            self.dereplicated_loci.append(loci[0])  # always include the first locus
-
-            for locus in loci[1:]:  # after the first locus, look for the locus names to be included
+            picked = 0
+            for locus in loci:  # look for the locus names to be included
                 if self.__should_be_included(locus=locus):
                     self.dereplicated_loci.append(locus)
+                    picked += 1
+
+            if picked == 0:  # pick the first locus if nothing has been picked yet
+                self.dereplicated_loci.append(loci[0])
 
     def __should_be_included(self, locus: Chromosome) -> bool:
         for locus_name in self.include_locus_names:

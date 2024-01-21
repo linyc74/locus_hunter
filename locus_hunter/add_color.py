@@ -2,8 +2,8 @@ import random
 import pandas as pd
 from ngslite import Chromosome
 from typing import Dict, Any, List
-from .constant import COLOR_KEY, ORTHOLOG_ID_KEY
 from .template import Processor
+from .constant import COLOR_KEY, ORTHOLOG_ID_KEY
 
 
 class AddColor(Processor):

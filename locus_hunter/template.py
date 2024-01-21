@@ -81,5 +81,5 @@ class Processor:
         )
 
     def call(self, cmd: str):
-        self.logger.info(cmd)
+        self.logger.debug(cmd)
         subprocess.check_call(cmd, shell=True)

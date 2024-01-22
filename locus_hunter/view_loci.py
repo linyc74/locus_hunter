@@ -265,5 +265,5 @@ class PlotGraphicRecords(Processor):
         return max(map(len, self.seqnames))
 
     def save_output(self):
-        for fmt in ['pdf']:
+        for fmt in ['pdf',  'png']:
             self.figure.savefig(f'{self.output}.{fmt}', dpi=self.dpi)

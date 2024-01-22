@@ -251,7 +251,7 @@ class SmithWatermanAligner:
 
     END_GAP_SCORE = 0.
     GAP_SCORE = -1.
-    MATCH_SCORE = 100.
+    MATCH_SCORE = 2.
     MISMATCH_SCORE = -1.
 
     def compare(self, a: Any, b: Any) -> float:

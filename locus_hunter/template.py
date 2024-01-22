@@ -25,7 +25,6 @@ class Settings:
 
 class Logger:
 
-    WARNING = 'WARNING'
     INFO = 'INFO'
     DEBUG = 'DEBUG'
 
@@ -37,21 +36,17 @@ class Logger:
         assert level in [self.INFO, self.DEBUG]
         self.level = level
 
-    def warning(self, msg: Any):
-        self.__print(level=self.WARNING, msg=msg)
-
     def info(self, msg: Any):
-        if self.level in [self.WARNING]:
-            return
-        self.__print(level=self.INFO, msg=msg)
+        self.__print(msg_level=self.INFO, msg=msg)
 
     def debug(self, msg: Any):
-        if self.level in [self.INFO, self.WARNING]:
+        if self.level == self.INFO:
             return
-        self.__print(level=self.DEBUG, msg=msg)
+        self.__print(msg_level=self.DEBUG, msg=msg)
 
-    def __print(self, level: str, msg: Any):
-        print(f'{self.name}\t{level}\t{datetime.now()}', flush=True)
+    def __print(self, msg_level: str, msg: Any):
+        if self.level == self.DEBUG:
+            print(f'{self.name}\t{msg_level}\t{datetime.now()}', flush=True)
         print(f'{msg}\n', flush=True)
 
 

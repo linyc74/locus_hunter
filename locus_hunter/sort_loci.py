@@ -205,7 +205,7 @@ class SortLociByComparison(Processor):
 
             orthologs = []
             for feature in locus.features:
-                if feature != 'CDS':
+                if feature.type != 'CDS':
                     continue
                 ortholog_id = feature.get_attribute(key=ORTHOLOG_ID_KEY)
                 if ortholog_id is not None:
@@ -227,10 +227,6 @@ class SortLociByComparison(Processor):
             orthologs_2 = self.locus_id_to_ortholog_ids[locus2.seqname]
 
             s = self.compare(list1=orthologs_1, list2=orthologs_2)
-            print(orthologs_1)
-            print(orthologs_2)
-            print(s)
-            print()
 
             similarity_matrix.append(s)
 
@@ -255,7 +251,7 @@ class SmithWatermanAligner:
 
     END_GAP_SCORE = 0.
     GAP_SCORE = -1.
-    MATCH_SCORE = 2.
+    MATCH_SCORE = 100.
     MISMATCH_SCORE = -1.
 
     def compare(self, a: Any, b: Any) -> float:

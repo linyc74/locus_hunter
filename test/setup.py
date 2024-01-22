@@ -26,7 +26,7 @@ class TestCase(unittest.TestCase):
             workdir=self.workdir,
             outdir=self.outdir,
             threads=6,
-            debug=True)
+            debug=False)
 
     def tear_down(self):
         shutil.rmtree(self.workdir)

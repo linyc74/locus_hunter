@@ -40,14 +40,14 @@ class Logger:
         self.__print(msg_level=self.INFO, msg=msg)
 
     def debug(self, msg: Any):
-        if self.level == self.INFO:
-            return
-        self.__print(msg_level=self.DEBUG, msg=msg)
+        if self.level == self.DEBUG:
+            self.__print(msg_level=self.DEBUG, msg=msg)
 
     def __print(self, msg_level: str, msg: Any):
         if self.level == self.DEBUG:
-            print(f'{self.name}\t{msg_level}\t{datetime.now()}', flush=True)
-        print(f'{msg}\n', flush=True)
+            print(f'{self.name}\t{msg_level}\t{datetime.now()}\n{msg}\n', flush=True)
+        else:
+            print(f'{msg}', flush=True)
 
 
 class Processor:

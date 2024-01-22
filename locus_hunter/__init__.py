@@ -15,6 +15,7 @@ def main(
         dereplicate_loci: bool,
         include_locus_names: str,
         label_attributes: str,
+        dpi: int,
         output: str,
         threads: int,
         debug: bool):
@@ -39,6 +40,7 @@ def main(
         dereplicate_loci=dereplicate_loci,
         include_locus_names=include_locus_names.split(','),
         label_attributes=label_attributes.split(','),
+        dpi=dpi,
         output=output)
 
     if not settings.debug:

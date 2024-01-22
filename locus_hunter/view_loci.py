@@ -11,6 +11,7 @@ class ViewLoci(Processor):
     loci: List[Chromosome]
     output: str
     label_attributes: List[str]
+    dpi: int
 
     graphic_records: List[GraphicRecord]
 
@@ -18,11 +19,13 @@ class ViewLoci(Processor):
             self,
             loci: List[Chromosome],
             output: str,
-            label_attributes: List[str]):
+            label_attributes: List[str],
+            dpi: int):
 
         self.loci = loci
         self.output = output
         self.label_attributes = label_attributes
+        self.dpi = dpi
 
         self.set_graphic_records()
         self.plot_graphic_records()
@@ -40,6 +43,7 @@ class ViewLoci(Processor):
         PlotGraphicRecords(self.settings).main(
             graphic_records=self.graphic_records,
             seqnames=seqnames,
+            dpi=self.dpi,
             output=self.output)
 
 
@@ -165,10 +169,10 @@ class PlotGraphicRecords(Processor):
     WIDTH_CM_PER_KB = 2 / 2.54
     WIDTH_CM_PER_CHAR = 0.2 / 2.54
     SCALE_BAR_KB = 5000
-    DPI = 600
 
     graphic_records: List[GraphicRecord]
     seqnames: List[str]
+    dpi: int
     output: str
 
     figure: plt.Figure
@@ -178,10 +182,12 @@ class PlotGraphicRecords(Processor):
             self,
             graphic_records: List[GraphicRecord],
             seqnames: List[str],
+            dpi: int,
             output: str):
 
         self.graphic_records = graphic_records
         self.seqnames = seqnames
+        self.dpi = dpi
         self.output = output
 
         self.init_figure()
@@ -260,4 +266,4 @@ class PlotGraphicRecords(Processor):
 
     def save_output(self):
         for fmt in ['pdf']:
-            self.figure.savefig(f'{self.output}.{fmt}', dpi=self.DPI)
+            self.figure.savefig(f'{self.output}.{fmt}', dpi=self.dpi)

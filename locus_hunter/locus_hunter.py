@@ -19,6 +19,7 @@ class LocusHunter(Processor):
     dereplicate_loci: bool
     include_locus_names: List[str]
     label_attributes: List[str]
+    dpi: int
     output: str
 
     loci: List[Chromosome]
@@ -34,6 +35,7 @@ class LocusHunter(Processor):
             dereplicate_loci: bool,
             include_locus_names: List[str],
             label_attributes: List[str],
+            dpi: int,
             output: str):
 
         self.query_faa = query_faa
@@ -45,6 +47,7 @@ class LocusHunter(Processor):
         self.dereplicate_loci = dereplicate_loci
         self.include_locus_names = include_locus_names
         self.label_attributes = label_attributes
+        self.dpi = dpi
         self.output = output
 
         self.extract_loci()
@@ -81,7 +84,8 @@ class LocusHunter(Processor):
         ViewLoci(self.settings).main(
             loci=self.loci,
             output=self.output,
-            label_attributes=self.label_attributes)
+            label_attributes=self.label_attributes,
+            dpi=self.dpi)
 
     def save_genbank(self):
         self.remove_intermediate_labels()

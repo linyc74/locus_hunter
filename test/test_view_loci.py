@@ -18,7 +18,8 @@ class TestViewLoci(TestCase):
         ViewLoci(self.settings).main(
             loci=loci,
             output=output,
-            label_attributes=['gene', 'locus_tag']
+            label_attributes=['gene', 'locus_tag'],
+            dpi=600
         )
 
     def test_very_long_name(self):
@@ -30,7 +31,8 @@ class TestViewLoci(TestCase):
         ViewLoci(self.settings).main(
             loci=loci,
             output=output,
-            label_attributes=['gene', 'locus_tag']
+            label_attributes=['gene', 'locus_tag'],
+            dpi=600
         )
 
 

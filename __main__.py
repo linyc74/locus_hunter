@@ -88,6 +88,15 @@ OPTIONAL = [
         }
     },
     {
+        'keys': ['--dpi'],
+        'properties': {
+            'type': int,
+            'required': False,
+            'default': 300,
+            'help': 'image resolution (default: %(default)s)',
+        }
+    },
+    {
         'keys': ['-o', '--output'],
         'properties': {
             'type': str,
@@ -170,6 +179,7 @@ class EntryPoint:
             dereplicate_loci=args.dereplicate_loci,
             include_locus_names=args.include_locus_names,
             label_attributes=args.label_attributes,
+            dpi=args.dpi,
             output=args.output,
             threads=args.threads,
             debug=args.debug)

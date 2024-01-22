@@ -33,6 +33,8 @@ class CdHit(Processor):
             '-d 0',
             f'-T {self.threads}',
             f'-o {output}',
+            f'1> {self.workdir}/cd-hit.log',
+            f'2> {self.workdir}/cd-hit.log',
         ]
         cmd = self.CMD_LINEBREAK.join(lines)
         self.call(cmd)

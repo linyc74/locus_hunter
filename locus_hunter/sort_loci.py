@@ -227,6 +227,10 @@ class SortLociByComparison(Processor):
             orthologs_2 = self.locus_id_to_ortholog_ids[locus2.seqname]
 
             s = self.compare(list1=orthologs_1, list2=orthologs_2)
+            print(orthologs_1)
+            print(orthologs_2)
+            print(s)
+            print()
 
             similarity_matrix.append(s)
 

@@ -8,7 +8,6 @@ from .constant import CDS_ID_KEY
 
 
 JOINER = '___'
-INTERVAL_TYPE = List[Tuple[int, int]]
 
 
 class ExtractLoci(Processor):
@@ -94,6 +93,15 @@ class ReadGenbank(Processor):
                     val=f'{chromosome.seqname}{JOINER}{i+1}')
 
 
+class Interval:
+
+    def __init__(self, start: int, end: int, names: List[str]):
+        assert start <= end
+        self.start = start
+        self.end = end
+        self.names = names
+
+
 class GetLociFromChromosome(Processor):
 
     query_faa: str
@@ -102,9 +110,9 @@ class GetLociFromChromosome(Processor):
     extension: int
 
     cds_features: List[GenericFeature]
-    cds_ids: List[str]
-    intervals: INTERVAL_TYPE
-    merged_intervals: INTERVAL_TYPE
+    hit_cds_ids: List[str]
+    cds_intervals: List[Interval]
+    merged_intervals: List[Interval]
     loci: List[Chromosome]
 
     def main(
@@ -124,8 +132,8 @@ class GetLociFromChromosome(Processor):
         if len(self.cds_features) == 0:
             return []
 
-        self.set_cds_ids()
-        self.set_intervals()
+        self.set_hit_cds_ids()
+        self.set_cds_intervals()
         self.set_merged_intervals()
         self.set_loci()
 
@@ -137,7 +145,7 @@ class GetLociFromChromosome(Processor):
             if f.type == 'CDS'
         ]
 
-    def set_cds_ids(self):
+    def set_hit_cds_ids(self):
 
         library = self.__get_library_faa_data()
 
@@ -146,7 +154,7 @@ class GetLociFromChromosome(Processor):
             library=library,
             evalue=self.evalue)
 
-        self.cds_ids = sorted(df['subject'].unique())
+        self.hit_cds_ids = sorted(df['subject'].unique())
 
     def __get_library_faa_data(self) -> List[Tuple[str, str]]:
         ret = []
@@ -157,27 +165,33 @@ class GetLociFromChromosome(Processor):
                 ret.append((cds_id, seq))
         return ret
 
-    def set_intervals(self):
+    def set_cds_intervals(self):
 
-        cds_dict = {c: True for c in self.cds_ids}
+        cds_dict = {c: True for c in self.hit_cds_ids}
 
-        self.intervals = []
+        self.cds_intervals = []
         for feature in self.cds_features:
             cds_id = feature.get_attribute(key=CDS_ID_KEY)
             in_cds_dict = cds_dict.get(cds_id, False)
             if in_cds_dict:
                 start = feature.start - self.extension
                 end = feature.end + self.extension
-                self.intervals.append((start, end))
+                interval = Interval(start=start, end=end, names=[cds_id])
+                self.cds_intervals.append(interval)
 
     def set_merged_intervals(self):
 
-        m = self.intervals[0:1]
+        m = self.cds_intervals[0:1]
 
-        for this in self.intervals[1:]:
+        for this in self.cds_intervals[1:]:
             last = m[-1]
             if overlap(this, last):
-                m[-1] = (last[0], this[1])
+                merged_interval = Interval(
+                    start=last.start,
+                    end=this.end,
+                    names=last.names + this.names
+                )
+                m[-1] = merged_interval
             else:
                 m.append(this)
 
@@ -185,8 +199,8 @@ class GetLociFromChromosome(Processor):
 
     def set_loci(self):
         self.loci = []
-        for start, end in self.merged_intervals:
-            locus = self.__get_locus(start=start, end=end)
+        for interval in self.merged_intervals:
+            locus = self.__get_locus(start=interval.start, end=interval.end)
             self.loci.append(locus)
 
     def __get_locus(self, start: int, end: int) -> Chromosome:
@@ -198,11 +212,5 @@ class GetLociFromChromosome(Processor):
         return locus
 
 
-def overlap(
-        a: Tuple[int, int],
-        b: Tuple[int, int]) -> bool:
-
-    start_a, end_a = sorted(a)
-    start_b, end_b = sorted(b)
-
-    return (end_a >= start_b) and (end_b >= start_a)
+def overlap(a: Interval, b: Interval) -> bool:
+    return (a.end >= b.start) and (b.end >= a.start)

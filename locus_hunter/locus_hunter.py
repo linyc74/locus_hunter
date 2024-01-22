@@ -14,6 +14,7 @@ class LocusHunter(Processor):
     gbk_dir: str
     evalue: float
     extension: int
+    min_hits_per_locus: int
     ortholog_identity: float
     dereplicate_loci: bool
     include_locus_names: List[str]
@@ -28,6 +29,7 @@ class LocusHunter(Processor):
             gbk_dir: str,
             evalue: float,
             extension: int,
+            min_hits_per_locus: int,
             ortholog_identity: float,
             dereplicate_loci: bool,
             include_locus_names: List[str],
@@ -38,6 +40,7 @@ class LocusHunter(Processor):
         self.gbk_dir = gbk_dir
         self.evalue = evalue
         self.extension = extension
+        self.min_hits_per_locus = min_hits_per_locus
         self.ortholog_identity = ortholog_identity
         self.dereplicate_loci = dereplicate_loci
         self.include_locus_names = include_locus_names
@@ -60,7 +63,8 @@ class LocusHunter(Processor):
             query_faa=self.query_faa,
             gbk_dir=self.gbk_dir,
             evalue=self.evalue,
-            extension=self.extension)
+            extension=self.extension,
+            min_hits_per_locus=self.min_hits_per_locus)
 
     def sort_loci(self):
         self.loci = SortLoci(self.settings).main(

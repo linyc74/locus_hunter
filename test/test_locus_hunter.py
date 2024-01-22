@@ -17,8 +17,9 @@ class TestLocusHunter(TestCase):
         LocusHunter(settings=self.settings).main(
             query_faa=f'{self.indir}/query.faa',
             gbk_dir=f'{self.indir}/gbk_dir',
-            extension=5000,
             evalue=1e-20,
+            extension=5000,
+            min_hits_per_locus=1,
             ortholog_identity=0.9,
             dereplicate_loci=True,
             include_locus_names=[],
@@ -37,8 +38,9 @@ class TestLocusHunter(TestCase):
         LocusHunter(settings=self.settings).main(
             query_faa=f'{self.indir}/wrong_query.faa',
             gbk_dir=f'{self.indir}/gbk_dir',
-            extension=5000,
             evalue=1e-20,
+            extension=5000,
+            min_hits_per_locus=1,
             ortholog_identity=0.9,
             dereplicate_loci=True,
             include_locus_names=[],

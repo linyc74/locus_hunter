@@ -16,6 +16,7 @@ class ExtractLoci(Processor):
     gbk_dir: str
     evalue: float
     extension: int
+    min_hits_per_locus: int
 
     loci = List[Chromosome]
 
@@ -24,12 +25,14 @@ class ExtractLoci(Processor):
             query_faa: str,
             gbk_dir: str,
             evalue: float,
-            extension: int) -> List[Chromosome]:
+            extension: int,
+            min_hits_per_locus: int) -> List[Chromosome]:
 
         self.query_faa = query_faa
         self.gbk_dir = gbk_dir
         self.evalue = evalue
         self.extension = extension
+        self.min_hits_per_locus = min_hits_per_locus
 
         self.loci = []
 
@@ -60,7 +63,8 @@ class ExtractLoci(Processor):
             query_faa=self.query_faa,
             chromosome=chromosome,
             evalue=self.evalue,
-            extension=self.extension)
+            extension=self.extension,
+            min_hits_per_locus=self.min_hits_per_locus)
 
     def log(self,
             chromosome: Chromosome,
@@ -101,6 +105,12 @@ class Interval:
         self.end = end
         self.names = names
 
+    def __str__(self) -> str:
+        return f'{self.start}-{self.end} names={self.names}'
+
+    def __repr__(self) -> str:
+        return f'Interval(start={self.start}, end={self.end}, names={self.names})'
+
 
 class GetLociFromChromosome(Processor):
 
@@ -108,6 +118,7 @@ class GetLociFromChromosome(Processor):
     chromosome: Chromosome
     evalue: float
     extension: int
+    min_hits_per_locus: int
 
     cds_features: List[GenericFeature]
     hit_cds_ids: List[str]
@@ -120,12 +131,14 @@ class GetLociFromChromosome(Processor):
             query_faa: str,
             chromosome: Chromosome,
             evalue: float,
-            extension: int) -> List[Chromosome]:
+            extension: int,
+            min_hits_per_locus: int) -> List[Chromosome]:
 
         self.query_faa = query_faa
         self.chromosome = chromosome
         self.evalue = evalue
         self.extension = extension
+        self.min_hits_per_locus = min_hits_per_locus
 
         self.set_cds_features()
 
@@ -135,6 +148,7 @@ class GetLociFromChromosome(Processor):
         self.set_hit_cds_ids()
         self.set_cds_intervals()
         self.set_merged_intervals()
+        self.filter_merged_intervals()
         self.set_loci()
 
         return self.loci
@@ -196,6 +210,12 @@ class GetLociFromChromosome(Processor):
                 m.append(this)
 
         self.merged_intervals = m
+
+    def filter_merged_intervals(self):
+        self.merged_intervals = [
+            interval for interval in self.merged_intervals
+            if len(interval.names) >= self.min_hits_per_locus
+        ]
 
     def set_loci(self):
         self.loci = []

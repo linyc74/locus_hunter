@@ -41,7 +41,16 @@ OPTIONAL = [
             'type': int,
             'required': False,
             'default': 5000,
-            'help': 'number of bp extended from each CDS hit (default: %(default)s)',
+            'help': 'number of base pair extended from each CDS hit by blastp (default: %(default)s)',
+        }
+    },
+    {
+        'keys': ['--min-hits-per-locus'],
+        'properties': {
+            'type': int,
+            'required': False,
+            'default': 1,
+            'help': 'min number of blastp hits per locus (default: %(default)s)',
         }
     },
     {
@@ -156,6 +165,7 @@ class EntryPoint:
             gbk_dir=args.gbk_dir,
             evalue=args.evalue,
             extension=args.extension,
+            min_hits_per_locus=args.min_hits_per_locus,
             ortholog_identity=args.ortholog_identity,
             dereplicate_loci=args.dereplicate_loci,
             include_locus_names=args.include_locus_names,

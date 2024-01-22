@@ -16,7 +16,8 @@ class TestExtractLoci(TestCase):
             query_faa=f'{self.indir}/query.faa',
             gbk_dir=f'{self.indir}/gbk_dir',
             extension=5000,
-            evalue=1e-3)
+            evalue=1e-3,
+            min_hits_per_locus=1)
 
         write_genbank(
             data=loci,
@@ -34,6 +35,7 @@ class TestExtractLoci(TestCase):
             query_faa=f'{self.indir}/wrong_query.faa',
             gbk_dir=f'{self.indir}/gbk_dir',
             extension=5000,
-            evalue=1e-20)
+            evalue=1e-20,
+            min_hits_per_locus=1)
 
         self.assertEqual([], loci)

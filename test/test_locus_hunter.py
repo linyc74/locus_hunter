@@ -24,6 +24,7 @@ class TestLocusHunter(TestCase):
             dereplicate_loci=True,
             include_locus_names=[],
             label_attributes=['gene', 'locus_tag'],
+            loci_per_plot=3,
             dpi=600,
             output=f'{self.outdir}/output'
         )
@@ -46,6 +47,7 @@ class TestLocusHunter(TestCase):
             dereplicate_loci=True,
             include_locus_names=[],
             label_attributes=['gene', 'locus_tag'],
+            loci_per_plot=3,
             dpi=600,
             output=f'{self.outdir}/output'
         )

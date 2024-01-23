@@ -15,6 +15,7 @@ def main(
         dereplicate_loci: bool,
         include_locus_names: str,
         label_attributes: str,
+        loci_per_plot: int,
         dpi: int,
         output: str,
         threads: int,
@@ -40,6 +41,7 @@ def main(
         dereplicate_loci=dereplicate_loci,
         include_locus_names=include_locus_names.split(','),
         label_attributes=label_attributes.split(','),
+        loci_per_plot=loci_per_plot,
         dpi=dpi,
         output=output)
 

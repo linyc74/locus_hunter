@@ -2,7 +2,7 @@ import argparse
 import locus_hunter
 
 
-__VERSION__ = '1.1.0'
+__VERSION__ = '1.1.1-beta'
 
 
 PROG = 'python locus_hunter'
@@ -85,6 +85,15 @@ OPTIONAL = [
             'required': False,
             'default': 'gene,locus_tag',
             'help': 'comma-separated attributes to be labeled on each CDS feature (default: %(default)s)',
+        }
+    },
+    {
+        'keys': ['--loci-per-plot'],
+        'properties': {
+            'type': int,
+            'required': False,
+            'default': 50,
+            'help': 'number of loci to be plotted in each output image (default: %(default)s)',
         }
     },
     {
@@ -179,6 +188,7 @@ class EntryPoint:
             dereplicate_loci=args.dereplicate_loci,
             include_locus_names=args.include_locus_names,
             label_attributes=args.label_attributes,
+            loci_per_plot=args.loci_per_plot,
             dpi=args.dpi,
             output=args.output,
             threads=args.threads,

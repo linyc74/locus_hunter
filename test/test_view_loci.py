@@ -1,5 +1,5 @@
 from ngslite import read_genbank, GenericFeature
-from locus_hunter.view_loci import GenericToGraphicFeature, ChromosomeToGraphicRecord, ViewLoci
+from locus_hunter.view_loci import GenericToGraphicFeature, ChromosomeToGraphicRecord, ViewLoci, split_list
 from .setup import TestCase
 
 
@@ -19,7 +19,8 @@ class TestViewLoci(TestCase):
             loci=loci,
             output=output,
             label_attributes=['gene', 'locus_tag'],
-            dpi=600
+            loci_per_plot=19,
+            dpi=300
         )
 
     def test_very_long_name(self):
@@ -32,7 +33,8 @@ class TestViewLoci(TestCase):
             loci=loci,
             output=output,
             label_attributes=['gene', 'locus_tag'],
-            dpi=600
+            loci_per_plot=10,
+            dpi=300
         )
 
 
@@ -83,3 +85,23 @@ class TestGenericToGraphicFeature(TestCase):
         expected = 'GF(None, 1-99 (1))'
 
         self.assertTrue(expected, str(graphic_feature))
+
+
+class TestFunctions(TestCase):
+
+    def test_split_list_dividable(self):
+        actual = split_list(ls=[1], size=1)
+        self.assertListEqual([[1]], actual)
+
+        actual = split_list(ls=[1, 2], size=1)
+        self.assertListEqual([[1], [2]], actual)
+
+        actual = split_list(ls=[1, 2, 3, 4], size=2)
+        self.assertListEqual([[1, 2], [3, 4]], actual)
+
+    def test_split_list_non_dividable(self):
+        actual = split_list(ls=[1, 2, 3], size=2)
+        self.assertListEqual([[1, 2], [3]], actual)
+
+        actual = split_list(ls=[1, 2, 3, 4, 5], size=2)
+        self.assertListEqual([[1, 2], [3, 4], [5]], actual)

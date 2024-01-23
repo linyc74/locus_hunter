@@ -19,6 +19,7 @@ class LocusHunter(Processor):
     dereplicate_loci: bool
     include_locus_names: List[str]
     label_attributes: List[str]
+    loci_per_plot: int
     dpi: int
     output: str
 
@@ -35,6 +36,7 @@ class LocusHunter(Processor):
             dereplicate_loci: bool,
             include_locus_names: List[str],
             label_attributes: List[str],
+            loci_per_plot: int,
             dpi: int,
             output: str):
 
@@ -47,6 +49,7 @@ class LocusHunter(Processor):
         self.dereplicate_loci = dereplicate_loci
         self.include_locus_names = include_locus_names
         self.label_attributes = label_attributes
+        self.loci_per_plot = loci_per_plot
         self.dpi = dpi
         self.output = output
 
@@ -85,6 +88,7 @@ class LocusHunter(Processor):
             loci=self.loci,
             output=self.output,
             label_attributes=self.label_attributes,
+            loci_per_plot=self.loci_per_plot,
             dpi=self.dpi)
 
     def save_genbank(self):

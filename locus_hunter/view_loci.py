@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from typing import List, Optional
+from typing import List, Optional, Dict
 from ngslite import GenericFeature, Chromosome
 from dna_features_viewer import GraphicFeature, GraphicRecord
 from .constant import COLOR_KEY
@@ -11,6 +11,7 @@ class ViewLoci(Processor):
     loci: List[Chromosome]
     output: str
     label_attributes: List[str]
+    loci_per_plot: int
     dpi: int
 
     graphic_records: List[GraphicRecord]
@@ -20,11 +21,13 @@ class ViewLoci(Processor):
             loci: List[Chromosome],
             output: str,
             label_attributes: List[str],
+            loci_per_plot: int,
             dpi: int):
 
         self.loci = loci
         self.output = output
         self.label_attributes = label_attributes
+        self.loci_per_plot = loci_per_plot
         self.dpi = dpi
 
         self.set_graphic_records()
@@ -39,12 +42,14 @@ class ViewLoci(Processor):
             self.graphic_records.append(record)
 
     def plot_graphic_records(self):
-        seqnames = [locus.seqname for locus in self.loci]
         PlotGraphicRecords(self.settings).main(
             graphic_records=self.graphic_records,
-            seqnames=seqnames,
+            loci_per_plot=self.loci_per_plot,
             dpi=self.dpi,
             output=self.output)
+
+
+#
 
 
 class ChromosomeToGraphicRecord(Processor):
@@ -66,7 +71,7 @@ class ChromosomeToGraphicRecord(Processor):
 
         self.set_graphic_features()
 
-        return GraphicRecord(
+        r = GraphicRecord(
             sequence_length=len(self.chromosome.sequence),
             sequence=None,
             features=self.graphic_features,
@@ -75,6 +80,8 @@ class ChromosomeToGraphicRecord(Processor):
             plots_indexing='biopython',
             labels_spacing=8,
             ticks_resolution='auto')
+        r.seqname = self.chromosome.seqname  # attach seqname to the graphic record
+        return r
 
     def set_graphic_features(self):
         self.graphic_features = []
@@ -163,7 +170,91 @@ class GenericToGraphicFeature(Processor):
             label_link_color='black')
 
 
+#
+
+
 class PlotGraphicRecords(Processor):
+
+    graphic_records: List[GraphicRecord]
+    loci_per_plot: int
+    dpi: int
+    output: str
+
+    output_to_graphic_records: Dict[str, List[GraphicRecord]]
+
+    def main(
+            self,
+            graphic_records: List[GraphicRecord],
+            loci_per_plot: int,
+            dpi: int,
+            output: str):
+
+        self.graphic_records = graphic_records
+        self.loci_per_plot = loci_per_plot
+        self.dpi = dpi
+        self.output = output
+
+        self.split_graphic_records()
+        self.make_plots()
+
+    def split_graphic_records(self):
+        self.output_to_graphic_records = SplitGraphicRecords(self.settings).main(
+            graphic_records=self.graphic_records,
+            loci_per_plot=self.loci_per_plot,
+            output_prefix=self.output)
+
+    def make_plots(self):
+        for output, graphic_records in self.output_to_graphic_records.items():
+            MakeOnePlot(self.settings).main(
+                graphic_records=graphic_records,
+                dpi=self.dpi,
+                output=output)
+
+
+class SplitGraphicRecords(Processor):
+
+    graphic_records: List[GraphicRecord]
+    loci_per_plot: int
+    output_prefix: str
+
+    chunk_of_records: List[List[GraphicRecord]]
+    output: List[str]
+
+    output_to_graphic_records: Dict[str, List[GraphicRecord]]
+
+    def main(
+            self,
+            graphic_records: List[GraphicRecord],
+            loci_per_plot: int,
+            output_prefix: str) -> Dict[str, List[GraphicRecord]]:
+
+        self.graphic_records = graphic_records
+        self.loci_per_plot = loci_per_plot
+        self.output_prefix = output_prefix
+
+        self.split_graphic_records_into_chunks()
+        self.set_output_to_graphic_records()
+
+        return self.output_to_graphic_records
+
+    def split_graphic_records_into_chunks(self):
+        self.chunk_of_records = split_list(
+            ls=self.graphic_records,
+            size=self.loci_per_plot)
+
+    def set_output_to_graphic_records(self):
+        if len(self.chunk_of_records) == 1:
+            self.output_to_graphic_records = {
+                self.output_prefix: self.chunk_of_records[0]
+            }
+            return
+
+        self.output_to_graphic_records = {}
+        for i, records in enumerate(self.chunk_of_records):
+            self.output_to_graphic_records[f'{self.output_prefix}_{i + 1}'] = records
+
+
+class MakeOnePlot(Processor):
 
     HEIGHT_CM_PER_LOCUS = 2 / 2.54
     WIDTH_CM_PER_KB = 2 / 2.54
@@ -171,35 +262,39 @@ class PlotGraphicRecords(Processor):
     SCALE_BAR_KB = 5000
 
     graphic_records: List[GraphicRecord]
-    seqnames: List[str]
     dpi: int
     output: str
 
+    seqnames: List[str]
     figure: plt.Figure
     axs = List[plt.Axes]
 
     def main(
             self,
             graphic_records: List[GraphicRecord],
-            seqnames: List[str],
             dpi: int,
             output: str):
 
         self.graphic_records = graphic_records
-        self.seqnames = seqnames
         self.dpi = dpi
         self.output = output
 
+        self.set_seqnames()
         self.init_figure()
         self.plot_graphic_records()
         self.config_figure()
         self.save_output()
+
+    def set_seqnames(self):
+        self.seqnames = [r.seqname for r in self.graphic_records]
 
     def init_figure(self):
         self.figure, self.axs = plt.subplots(
             nrows=len(self.graphic_records),
             ncols=1
         )
+        if len(self.graphic_records) == 1:
+            self.axs = [self.axs]
 
     def plot_graphic_records(self):
         x_max = self.max_seq_len()
@@ -265,5 +360,18 @@ class PlotGraphicRecords(Processor):
         return max(map(len, self.seqnames))
 
     def save_output(self):
-        for fmt in ['pdf',  'png']:
+        for fmt in ['pdf', 'png']:
             self.figure.savefig(f'{self.output}.{fmt}', dpi=self.dpi)
+
+
+def split_list(ls: list, size: int) -> List[list]:
+    quotient = len(ls) // size
+    remainder = len(ls) % size
+
+    num_chunks = quotient if remainder == 0 else quotient + 1
+
+    ret = []
+    for i in range(num_chunks):
+        chunk = ls[i*size:i*size+size]
+        ret.append(chunk)
+    return ret

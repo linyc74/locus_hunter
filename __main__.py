@@ -92,7 +92,7 @@ OPTIONAL = [
         'properties': {
             'type': int,
             'required': False,
-            'default': 50,
+            'default': 100,
             'help': 'number of loci to be plotted in each output image (default: %(default)s)',
         }
     },

@@ -2,7 +2,7 @@ import argparse
 import locus_hunter
 
 
-__VERSION__ = '1.1.1'
+__VERSION__ = '1.1.2'
 
 
 PROG = 'python locus_hunter'

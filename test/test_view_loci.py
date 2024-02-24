@@ -37,6 +37,18 @@ class TestViewLoci(TestCase):
             dpi=300
         )
 
+    def test_duplicate_color_fields(self):
+        loci = read_genbank(file=f'{self.indir}/diplicate_color.gbk')
+        output = f'{self.outdir}/output'
+
+        ViewLoci(self.settings).main(
+            loci=loci,
+            output=output,
+            label_attributes=['gene', 'locus_tag'],
+            loci_per_plot=10,
+            dpi=300
+        )
+
 
 class TestChromosomeToGraphicRecord(TestCase):
 

@@ -113,7 +113,7 @@ class GenericToGraphicFeature(Processor):
 
     strand: int
     label: Optional[str]
-    color: str
+    color: Optional[str]
 
     graphic_feature: GraphicFeature
 
@@ -145,10 +145,15 @@ class GenericToGraphicFeature(Processor):
                 break
 
     def set_color(self):
-        f = self.generic_feature
-        self.color = f.get_attribute(key=COLOR_KEY)
-        if self.color is None:
+        color = self.generic_feature.get_attribute(key=COLOR_KEY)
+
+        if type(color) is list:
+            self.logger.info(f'WARNING: multiple colors {color} found for {self.generic_feature}')
+            self.color = color[0]
+        elif color is None:
             self.color = self.DEFAULT_COLOR
+        else:
+            self.color = color
 
     def set_graphic_feature(self):
         self.graphic_feature = GraphicFeature(
